@@ -5,12 +5,12 @@ import java.util.Scanner;
 import java.io.FileReader;
 
 
-///**
-// * SudokuSolver.java
-// * 
-// * @author Miles
-// * @version 5/14/14
-// */
+/**
+ * SudokuSolver.java
+ * 
+ * @author Miles Friedman
+ * @version 5/14/14
+ */
 public class SudokuSolver {
 
 	public static void main(String[] args) throws Exception {
@@ -21,9 +21,9 @@ public class SudokuSolver {
 		//Create the sudoku puzzle skeleton
 		Cell board[][] = new Cell[9][9];
 		
-		int numberOfPuzzles = input.nextInt();
+		int numOfPuzzles = input.nextInt();
 		
-		//System.out.println(numberOfPuzzles); 
+		//System.out.println(numOfPuzzles); 
 		
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
@@ -41,7 +41,7 @@ public class SudokuSolver {
 			
 		}//end column loop
 		
-		//displayBoard(board);
+		displayBoard(board);
 		
 		
 	}
@@ -50,13 +50,13 @@ public class SudokuSolver {
 		
 	}
 	
-	static void displayBoard (int[][] board) {
+	static void displayBoard (Cell[][] board) {
 		System.out.println("This is the board: \n");
 				
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
 						
-						System.out.print(board[i][j]);
+						System.out.print(board[i][j].getCellValue() + " ");
 					
 				}//end row loop
 				

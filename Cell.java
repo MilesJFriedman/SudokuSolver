@@ -20,7 +20,7 @@ public class Cell {
 		this.xCoordinate = x;
 		this.yCoordinate = y;
 		this.cellValue = value;
-		this.membOfBlock = getBlockNumber();
+		this.membOfBlock = setBlockNumber();
 		this.possibleValues = new ArrayList<Integer>();
 	}//constructor
 	
@@ -28,7 +28,7 @@ public class Cell {
 	//Used to get the number of the 3 by 3 block that this cell is a part of. It begins by
 	//checking which of the three columns of blocks the cell lies within and then checks which
 	//row of 3 blocks to figure out which block the cell is a part of.
-	public int getBlockNumber () {
+	public int setBlockNumber () {
 		int blockNumber = 0;
 		
 		if (this.xCoordinate >= 0 && this.xCoordinate <= 2) {
@@ -58,4 +58,11 @@ public class Cell {
 			
 	}
 
+	public int getCellValue () {
+		return this.cellValue;
+	}
+	
+	public int getBlockNumber () {
+		return this.membOfBlock;
+	}
 }
