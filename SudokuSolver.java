@@ -20,6 +20,9 @@ public class SudokuSolver {
 		
 		//Create the sudoku puzzle skeleton
 		Cell board[][] = new Cell[9][9];
+		//Create a 2D array, each row represents a 3 by 3 block and its corresponding number.
+		//each column represents the 9 cells that make up that cell block.
+		Cell[][] blocks = new Cell[9][9];
 		
 		int numOfPuzzles = input.nextInt();
 		
@@ -32,6 +35,7 @@ public class SudokuSolver {
 				int test = input.nextInt();
 				if (test > -1 || input.nextInt() < 10){	
 						board[x][y] = new Cell (x, y, test);
+						fillBlocks (x, y, board, blocks);
 						
 				}//end check for empty line
 				
@@ -41,13 +45,45 @@ public class SudokuSolver {
 			
 		}//end column loop
 		
-		displayBoard(board);
+		displayBlocks(board);
 		
 		
 	}
 	
 	static void solvePuzzle (int[][] board) {
 		
+	}
+	
+	static void fillBlocks (int x, int y, Cell[][] board, Cell[][] blocks) {
+		//Check the current cell's block number
+		int blockNum = board[x][y].getBlockNumber();
+
+		//Use the block number of the current cell to determine the row index for the block
+		//array, then loop through each index of the
+		for (int i = 0; i < 9; i++) {
+			
+			//If there is no cell already stored in the i'th index of a certain cell block group,
+			//store the current cell in that cell block.
+			if (blocks[blockNum - 1][i] == null)
+				blocks[blockNum - 1][i] = board[x][y];
+		}
+		
+			
+	}
+	
+	static void displayBlocks (Cell[][] blocks) {
+		System.out.println("This is the blocks board: \n");
+		
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 9; j++) {
+					
+					System.out.print(blocks[i][j].getCellValue() + " ");
+				
+			}//end row loop
+			
+			System.out.print("\n");
+			
+		}//end column loop
 	}
 	
 	static void displayBoard (Cell[][] board) {
