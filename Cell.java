@@ -35,21 +35,21 @@ public class Cell {
 			if (this.yCoordinate >= 0 && this.yCoordinate <= 2)
 				blockNumber = 1;
 			else if (this.yCoordinate >= 3 && this.yCoordinate <= 5)
-				blockNumber = 4;
+				blockNumber = 2;
 			else if (this.yCoordinate >= 6 && this.yCoordinate <= 8)
-				blockNumber = 7;
+				blockNumber = 3;
 		} else if (this.xCoordinate >= 3 && this.xCoordinate <= 5) {
 			if (this.yCoordinate >= 0 && this.yCoordinate <= 2)
-				blockNumber = 2;
+				blockNumber = 4;
 			else if (this.yCoordinate >= 3 && this.yCoordinate <= 5)
 				blockNumber = 5;
 			else if (this.yCoordinate >= 6 && this.yCoordinate <= 8)
-				blockNumber = 8;
+				blockNumber = 6;
 		} else if (this.xCoordinate >= 6 && this.xCoordinate <= 8) {
 			if (this.yCoordinate >= 0 && this.yCoordinate <= 2)
-				blockNumber = 3;
+				blockNumber = 7;
 			else if (this.yCoordinate >= 3 && this.yCoordinate <= 5)
-				blockNumber = 6;
+				blockNumber = 8;
 			else if (this.yCoordinate >= 6 && this.yCoordinate <= 8)
 				blockNumber = 9;
 		}
