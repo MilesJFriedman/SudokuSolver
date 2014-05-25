@@ -24,28 +24,76 @@ public class SudokuSolver {
 		//each column represents the 9 cells that make up that cell block.
 		Cell[][] blocks = new Cell[9][9];
 		
+		//Scan in the number of puzzles
 		int numOfPuzzles = input.nextInt();
+		
+		//Create a variable to keep track of how many empty cells (cellValue of 0) there are 
+		//in each row, in each column.
+		int emptyCellsR = -1, emptyCellsC = -1;
+		//Records the current best or least amount of empty cells in a row, in a column.
+		int bestCountR = -1, bestCountC = -1;
+		//Keeps track of the row number/column number with the least amount of empty cells to fill 
+		int bestRow = -1, bestColumn = -1;
 		
 		//System.out.println(numOfPuzzles); 
 		
-		for (int x = 0; x < 9; x++) {
-			for (int y = 0; y < 9; y++) {
-				//System.out.println("x: " + x + " y: " + y);
+		int x, y;
+		for (x = 0; x < 9; x++) {
+			for (y = 0; y < 9; y++) {
+				
 				//if (input.nextLine() != "\n" && input.next() != " ") {
 				int test = input.nextInt();
 				//if (test > -1 && test < 10){	
-						board[x][y] = new Cell (x, y, test);
-						fillBlocks (x, y, board, blocks);
-						
+				//Places cells onto the board
+				board[x][y] = new Cell (x, y, test);
+				//Fills the blocks array based on info gathered from each cell
+				fillBlocks (x, y, board, blocks);
 				//}//end check for empty line
 				
 			}//end row loop
 			
-			System.out.println();
-			
 		}//end column loop
 		
-		displayBlocks(blocks);
+		for (x = 0; x < 9; x++) {
+			for (y = 0; y < 9; y++) {
+				
+				
+				//(Invert the x and y variables to loop through each cell in the column/row) 
+				//Increment the emptyCell variable for the column or row as empty cells are found.
+				if (board[x][y].getCellValue() == 0)
+					emptyCellsR++;
+						
+				//System.out.println("\n" + board[x][y].getCellValue());
+				if (board[y][x].getCellValue() == 0)
+					emptyCellsC++;
+				
+			}
+			
+			//If checking the first row OR if the amount of empty cells in the current row is less 
+			//than the amount of empty cells in the current best row, set a new bestCount and 
+			//update the bestRow.
+			if (bestCountR == -1 || (emptyCellsR != -1 && emptyCellsR < bestCountR)) {
+				bestCountR = emptyCellsR;
+				bestRow = x;
+			}
+			
+			emptyCellsR = -1;
+			
+			//Similar condition as above only x and y are inverted (x now refers to column #)
+			if (bestCountC == -1 || (emptyCellsC != -1 && emptyCellsC < bestCountC)) {
+				bestCountC = emptyCellsC;
+				bestColumn = x;
+			}
+			
+			emptyCellsC = -1;
+			
+		}
+	
+		
+		System.out.println();
+		System.out.println("Best Row: " + bestRow + ", Best Count Row: " + bestCountR);
+		
+		//displayBlocks(blocks);
 		//displayBoard(board);
 		
 	}
