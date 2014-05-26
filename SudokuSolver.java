@@ -88,17 +88,18 @@ public class SudokuSolver {
 		NumberTracker has7 = new NumberTracker(false);
 		NumberTracker has8 = new NumberTracker(false);
 		NumberTracker has9 = new NumberTracker(false);
-		int i,j;
+		int i,j, c;
 		
 		//Determine if whether to start at the best row, or the best column
 		//If the best column is the best starting point, check to see what values the empty
 		//spaces of each column can contain by checking the block/row for the empty cell.
-		if (bestCountC <= bestCountR) {
+		//if (bestCountC <= bestCountR) {
 		
-			
+		//keeps track of what column the program is currently looking at
+		for (c = 0; c < 9; c++) {
 			for (i = 0; i < 9; i++) {
 				//check the column for contained values
-				switch (board[i][bestColumn].getCellValue()) {
+				switch (board[i][c].getCellValue()) {
 					case 1: has1.setContains(true);
 							break;
 					case 2: has2.setContains(true);
@@ -120,9 +121,11 @@ public class SudokuSolver {
 				}//end original switch
 			}//end i for loop
 			
+			//System.out.println("has1: " + has1.isContained() + " has2: " + has2.isContained() + " has3: " + has3.isContained() + " has4: " + has4.isContained() + " has5: " + has5.isContained() + " has6: " + has6.isContained() + " has7: " + has7.isContained() + " has8: " + has8.isContained() + " has9: " + has9.isContained());
+			
 			//fill each empty cells possible values array with the newly gained boolean values.
 			for (i = 0; i < 9; i++) {
-				if (board[i][bestColumn].getCellValue() == 0) {
+				if (board[i][c].getCellValue() == 0) {
 					for (j = 0; j < 9; j++) {
 						//check the row for contained values, if a value hasn't already been 
 						//found in the column search, mark it as changed.
@@ -159,7 +162,7 @@ public class SudokuSolver {
 						//check the block for contained values, if a value hasn't already been
 						//found in the column, mark it as a changed. (getBlockNumber-1 because 
 						//blocks start at the 1 while the actual index starts at 0).
-						switch (blocks[board[i][bestColumn].getBlockNumber()-1][j].getCellValue()) {
+						switch (blocks[board[i][c].getBlockNumber()-1][j].getCellValue()) {
 							case 1: has1.markChanged();
 									has1.setContains(true);
 									break;
@@ -193,23 +196,23 @@ public class SudokuSolver {
 		
 					//fill the possibleValues array list for the empty cell
 					if (has1.isContained() == false)
-						board[i][bestColumn].possibleValues.add(1);
+						board[i][c].possibleValues.add(1);
 					if (has2.isContained() == false)
-						board[i][bestColumn].possibleValues.add(2);
+						board[i][c].possibleValues.add(2);
 					if (has3.isContained() == false)
-						board[i][bestColumn].possibleValues.add(3);
+						board[i][c].possibleValues.add(3);
 					if (has4.isContained() == false)
-						board[i][bestColumn].possibleValues.add(4);
+						board[i][c].possibleValues.add(4);
 					if (has5.isContained() == false)
-						board[i][bestColumn].possibleValues.add(5);
+						board[i][c].possibleValues.add(5);
 					if (has6.isContained() == false)
-						board[i][bestColumn].possibleValues.add(6);
+						board[i][c].possibleValues.add(6);
 					if (has7.isContained() == false)
-						board[i][bestColumn].possibleValues.add(7);
+						board[i][c].possibleValues.add(7);
 					if (has8.isContained() == false)
-						board[i][bestColumn].possibleValues.add(8);
+						board[i][c].possibleValues.add(8);
 					if (has9.isContained() == false)
-						board[i][bestColumn].possibleValues.add(9);
+						board[i][c].possibleValues.add(9);
 					
 					//reset any boolean numberTracking values that weren't found in the column
 					//for so that the next empty cell tested in the column doesn't carry over
@@ -223,17 +226,47 @@ public class SudokuSolver {
 					has7.testAndReset();
 					has8.testAndReset();
 					has9.testAndReset();
+					
+					//if there is only one element in an empty cells possibleValues list, set 
+					//the cellValue for that empty cell equal to the single possibleValue.
+					//if (board[i][c].getPossibleValuesSize() == 1) 
 				}//end if empty cell is found
 				
-				System.out.printf("Cell (%d,%d)'s possible cell values are: ", i, bestColumn);
-				for (Integer value: board[i][bestColumn].possibleValues)
+				System.out.printf("Cell (%d,%d)'s possible cell values are: ", i, c);
+				for (Integer value: board[i][c].possibleValues)
 					System.out.print(value + ", ");
 				System.out.println();
 				
 			}//end for i loop
+			
+			//After each column is iterated through, reset all boolean NumberTracker "contains"
+			//values and their corresponding "changed" values. 
+			has1.setContains(false);
+			has1.resetChanged();
+			has2.setContains(false);
+			has2.resetChanged();
+			has3.setContains(false);
+			has3.resetChanged();
+			has4.setContains(false);
+			has4.resetChanged();
+			has5.setContains(false);
+			has5.resetChanged();
+			has6.setContains(false);
+			has6.resetChanged();
+			has7.setContains(false);
+			has7.resetChanged();
+			has8.setContains(false);
+			has8.resetChanged();
+			has9.setContains(false);
+			has9.resetChanged();
+			
+			System.out.println("\n");
+			
+		}//end c for loop
 		
 		
-		//else if starting on the best row	
+		
+		/*//else if starting on the best row	
 		} else if (bestCountR < bestCountC) {
 			for (i = 0; i < 9; i++) {
 				//check the row for contained values
@@ -265,7 +298,7 @@ public class SudokuSolver {
 						/*System.out.println("board: " + board[j][i].getCellValue());
 						System.out.println();
 						System.out.println("blocks: " + blocks[board[bestRow][i].getBlockNumber()][j].getCellValue());
-						System.out.println();*/
+						System.out.println();
 						//check the column for contained values, if a value hasn't already been 
 						//found in the row search, mark it as changed.
 						switch (board[j][i].getCellValue()) {
@@ -374,7 +407,7 @@ public class SudokuSolver {
 				System.out.println();
 				
 			}//end for i loop
-		}//end if starting on the best row
+		}//end if starting on the best row*/
 		
 	}//end narrowTheSearch
 	

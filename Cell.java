@@ -25,6 +25,7 @@ public class Cell {
 	}//constructor
 	
 	
+	
 	//Used to get the number of the 3 by 3 block that this cell is a part of. It begins by
 	//checking which of the three columns of blocks the cell lies within and then checks which
 	//row of 3 blocks to figure out which block the cell is a part of.
@@ -67,4 +68,10 @@ public class Cell {
 	public int getBlockNumber () {
 		return this.membOfBlock;
 	}
+
+	//returns the size of the possibleValues arrayList for this cell
+	public int getPossibleValuesSize () {
+		return this.possibleValues.size();
+	}
+	
 }

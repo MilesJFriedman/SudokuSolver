@@ -14,8 +14,8 @@ package homework1Sudoku;
  */
 public class NumberTracker {
 
-	boolean contains;
-	boolean changed;
+	private boolean contains;
+	private boolean changed;
 	
 	public NumberTracker (boolean has) {
 		this.contains = has;
@@ -30,6 +30,10 @@ public class NumberTracker {
 	public void setContains (boolean has) {
 		this.contains = has;
 	}//setter
+	
+	public void resetChanged () {
+		this.changed = false;
+	}
 	
 	public void markChanged () {
 		if (this.contains == false)
