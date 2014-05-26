@@ -60,15 +60,15 @@ public class SudokuSolver {
 		//System.out.println("bestCountR: " + bestCountR + " bestCountC: " + bestCountC);
 		
 		
-		boolean has1 = false;
-		boolean has2 = false;
-		boolean has3 = false;
-		boolean has4 = false;
-		boolean has5 = false;
-		boolean has6 = false;
-		boolean has7 = false;
-		boolean has8 = false;
-		boolean has9 = false;
+		NumberTracker has1 = new NumberTracker(false);
+		NumberTracker has2 = new NumberTracker(false);
+		NumberTracker has3 = new NumberTracker(false);
+		NumberTracker has4 = new NumberTracker(false);
+		NumberTracker has5 = new NumberTracker(false);
+		NumberTracker has6 = new NumberTracker(false);
+		NumberTracker has7 = new NumberTracker(false);
+		NumberTracker has8 = new NumberTracker(false);
+		NumberTracker has9 = new NumberTracker(false);
 		int i,j;
 		
 		//Determine if whether to start at the best row, or the best column
@@ -78,130 +78,143 @@ public class SudokuSolver {
 			for (i = 0; i < 9; i++) {
 				//check the column for contained values
 				switch (board[i][bestColumn].getCellValue()) {
-					case 1: has1 = true;
+					case 1: has1.setContains(true);
 							break;
-					case 2: has2 = true;
+					case 2: has2.setContains(true);
 							break;
-					case 3: has3 = true;
+					case 3: has3.setContains(true);
 							break;
-					case 4: has4 = true;
+					case 4: has4.setContains(true);
 							break;
-					case 5: has5 = true;
+					case 5: has5.setContains(true);
 							break;
-					case 6: has6 = true;
+					case 6: has6.setContains(true);
 							break;
-					case 7: has7 = true;
+					case 7: has7.setContains(true);
 							break;
-					case 8: has8 = true;
+					case 8: has8.setContains(true);
 							break;
-					case 9: has9 = true;
+					case 9: has9.setContains(true);
 							break;
-					case 0: for (j = 0; j < 9; j++) {
-								//check the row for contained values
-								/*switch (board[i][j].getCellValue()) {
-									case 1: has1 = true;
-											break;
-									case 2: has2 = true;
-											break;
-									case 3: has3 = true;
-											break;
-									case 4: has4 = true;
-											break;
-									case 5: has5 = true;
-											break;
-									case 6: has6 = true;
-											break;
-									case 7: has7 = true;
-											break;
-									case 8: has8 = true;
-											break;
-									case 9: has9 = true;
-											break;				
-								}//end row switch*/
-								
-								/*//check the block for contained values
-								switch (blocks[board[i][bestColumn].getBlockNumber()][j].getCellValue()) {
-									case 1: has1 = true;
-											break;
-									case 2: has2 = true;
-											break;
-									case 3: has3 = true;
-											break;
-									case 4: has4 = true;
-											break;
-									case 5: has5 = true;
-											break;
-									case 6: has6 = true;
-											break;
-									case 7: has7 = true;
-											break;
-									case 8: has8 = true;
-											break;
-									case 9: has9 = true;
-											break;				
-								}//end block switch*/
-								
-							}//end j for loop
-					
-							//fill the possibleValues array list for each empty cell
-							if (has1 == false)
-								board[i][bestColumn].possibleValues.add(1);
-							if (has2 == false)
-								board[i][bestColumn].possibleValues.add(2);
-							if (has3 == false)
-								board[i][bestColumn].possibleValues.add(3);
-							if (has4 == false)
-								board[i][bestColumn].possibleValues.add(4);
-							if (has5 == false)
-								board[i][bestColumn].possibleValues.add(5);
-							if (has6 == false)
-								board[i][bestColumn].possibleValues.add(6);
-							if (has7 == false)
-								board[i][bestColumn].possibleValues.add(7);
-							if (has8 == false)
-								board[i][bestColumn].possibleValues.add(8);
-							if (has9 == false)
-								board[i][bestColumn].possibleValues.add(9);
-							break;
-							
 				}//end original switch
-
-				System.out.printf("Cell (%d,%d)'s possible cell values are: ", i, bestColumn);
-				for (Integer value: board[i][bestColumn].possibleValues)
-					System.out.print(value + ", ");
-				System.out.println();
-				
-			}
+			}//end i for loop
 			
-			/*//fill each empty cells possible values array with the newly gained boolean values.
+			//fill each empty cells possible values array with the newly gained boolean values.
 			for (i = 0; i < 9; i++) {
 				if (board[i][bestColumn].getCellValue() == 0) {
-					if (has1 == false)
+					for (j = 0; j < 9; j++) {
+						/*System.out.println("board: " + board[i][j].getCellValue());
+						System.out.println();
+						System.out.println("blocks: " + blocks[board[i][bestColumn].getBlockNumber()][j].getCellValue());
+						System.out.println();*/
+						//check the row for contained values, if a value hasn't already been 
+						//found in the column search, mark it as changed.
+						switch (board[i][j].getCellValue()) {
+							case 1: has1.markChanged();
+									has1.setContains(true);
+									break;
+							case 2: has2.markChanged();
+									has2.setContains(true);
+									break;
+							case 3: has3.markChanged();
+									has3.setContains(true);
+									break;
+							case 4: has4.markChanged();
+									has4.setContains(true);
+									break;
+							case 5: has5.markChanged();
+									has5.setContains(true);
+									break;
+							case 6: has6.markChanged();
+									has6.setContains(true);
+									break;
+							case 7: has7.markChanged();
+									has7.setContains(true);
+									break;
+							case 8: has8.markChanged();
+									has8.setContains(true);
+									break;
+							case 9: has9.markChanged();
+									has9.setContains(true);
+									break;				
+						}//end row switch*/
+						
+						//check the block for contained values, if a value hasn't already been
+						//found in the column, mark it as a changed. (getBlockNumber-1 because blocks start
+						//(at the 1 while the actual index starts at 0).
+						switch (blocks[board[i][bestColumn].getBlockNumber()-1][j].getCellValue()) {
+							case 1: has1.markChanged();
+									has1.setContains(true);
+									break;
+							case 2: has2.markChanged();
+									has2.setContains(true);
+									break;
+							case 3: has3.markChanged();
+									has3.setContains(true);
+									break;
+							case 4: has4.markChanged();
+									has4.setContains(true);
+									break;
+							case 5: has5.markChanged();
+									has5.setContains(true);
+									break;
+							case 6: has6.markChanged();
+									has6.setContains(true);
+									break;
+							case 7: has7.markChanged();
+									has7.setContains(true);
+									break;
+							case 8: has8.markChanged();
+									has8.setContains(true);
+									break;
+							case 9: has9.markChanged();
+									has9.setContains(true);
+									break;				
+						}//end block switch*/
+						
+					}//end j for loop
+		
+					//fill the possibleValues array list for each empty cell
+					if (has1.isContained() == false)
 						board[i][bestColumn].possibleValues.add(1);
-					if (has2 == false)
+					if (has2.isContained() == false)
 						board[i][bestColumn].possibleValues.add(2);
-					if (has3 == false)
+					if (has3.isContained() == false)
 						board[i][bestColumn].possibleValues.add(3);
-					if (has4 == false)
+					if (has4.isContained() == false)
 						board[i][bestColumn].possibleValues.add(4);
-					if (has5 == false)
+					if (has5.isContained() == false)
 						board[i][bestColumn].possibleValues.add(5);
-					if (has6 == false)
+					if (has6.isContained() == false)
 						board[i][bestColumn].possibleValues.add(6);
-					if (has7 == false)
+					if (has7.isContained() == false)
 						board[i][bestColumn].possibleValues.add(7);
-					if (has8 == false)
+					if (has8.isContained() == false)
 						board[i][bestColumn].possibleValues.add(8);
-					if (has9 == false)
+					if (has9.isContained() == false)
 						board[i][bestColumn].possibleValues.add(9);
-				}
+					
+					//reset any boolean numberTracking values that weren't found in the column
+					//for so that the next empty cell tested in the column doesn't carry over
+					//the numberTracking values from a previous empty cells row/block.
+					has1.testAndReset();
+					has2.testAndReset();
+					has3.testAndReset();
+					has4.testAndReset();
+					has5.testAndReset();
+					has6.testAndReset();
+					has7.testAndReset();
+					has8.testAndReset();
+					has9.testAndReset();
+					
+				}//end if empty cell is found
 				
 				System.out.printf("Cell (%d,%d)'s possible cell values are: ", i, bestColumn);
 				for (Integer value: board[i][bestColumn].possibleValues)
 					System.out.print(value + ", ");
 				System.out.println();
 				
-			}*/
+			}//end for i loop
 			
 		}//end if starting on the bestRow*/
 		
