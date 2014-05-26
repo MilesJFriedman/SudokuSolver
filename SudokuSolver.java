@@ -59,6 +59,25 @@ public class SudokuSolver {
 		
 		//System.out.println("bestCountR: " + bestCountR + " bestCountC: " + bestCountC);
 		
+		narrowTheSearch (board, blocks, bestCountR, bestCountC, bestRow, bestColumn);
+
+				
+		//displayBlocks(blocks);
+		//displayBoard(board);
+		
+	}//end main
+	
+	
+	
+	static void solvePuzzle (Cell[][] board, Cell[][] blocks) {
+		
+		
+	}
+	
+	
+	//Loops through each cell of the bestRow/Column and fills the possibleValues arrayList for
+	//each empty cell in that bestRow/Column.
+	static void narrowTheSearch (Cell[][] board, Cell[][] blocks, int bestCountR, int bestCountC, int bestRow, int bestColumn) {
 		
 		NumberTracker has1 = new NumberTracker(false);
 		NumberTracker has2 = new NumberTracker(false);
@@ -357,16 +376,7 @@ public class SudokuSolver {
 			}//end for i loop
 		}//end if starting on the best row
 		
-		
-		//displayBlocks(blocks);
-		//displayBoard(board);
-		
-	}
-	
-	static void solvePuzzle (Cell[][] board, Cell[][] blocks) {
-		
-		
-	}
+	}//end narrowTheSearch
 	
 	//Finds the which column or row has the least amount of empty cells to fill and should be
 	//the first row or column started at.
