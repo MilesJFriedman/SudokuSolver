@@ -58,10 +58,12 @@ public class Cell {
 			
 	}
 
+	//returns the integer value stored within the cell
 	public int getCellValue () {
 		return this.cellValue;
 	}
 	
+	//returns the 3 by 3 block the this cell belongs to
 	public int getBlockNumber () {
 		return this.membOfBlock;
 	}
