@@ -1,6 +1,7 @@
 package homework1Sudoku;
 
 import java.io.BufferedReader;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.FileReader;
@@ -68,7 +69,7 @@ public class SudokuSolver {
 		
 		fillDefiniteValues (board, blocks);
 		
-		solvePuzzleRec (board, blocks, x, y, index, toRetreat);
+		solvePuzzle (board, blocks, x, y, index, toRetreat);
 		
 		//System.out.println("board (6,3) has this many possible values: " + board[6][3].possibleValues.size());
 		//System.out.println("board (6,3) element 0 of possibleValues is: " + board[6][3].possibleValues.get(0));
@@ -118,9 +119,63 @@ public class SudokuSolver {
 	
 	
 	
-	static void solvePuzzleRec (Cell[][] board, Cell[][] blocks, int x, int y, int index, boolean toRetreat) {
-	
-		//Make sure that the values for x and y won't cause an out of bounds error.
+	static void solvePuzzle (Cell[][] board, Cell[][] blocks, int x, int y, int index, boolean toRetreat) {
+		//create an array list to hold empty cells.
+		ArrayList<Cell> emptyCells = new ArrayList<Cell>();
+		
+		//populate the emptyCell arraylist.
+		for (x = 0; x < 9; x++) {
+			for (y = 0; y < 9; y++) {
+				if (board[x][y].getCellValue() == 0) {
+					emptyCells.add(board[x][y]);
+				}
+			}
+		}
+		
+		//System.out.println("There are this many empty cells: " + emptyCells.size());
+		
+		//Iterates through the emptyCell array list that was populated above.
+		for (int i = 0; i < emptyCells.size(); i++) {
+					if (emptyCells.get(i).possibleValues.isEmpty() == false && index < emptyCells.get(i).possibleValues.size()) {
+						//if testing, set the cellValue of the current emptyCell equal to the 
+						//possibleValue at it's testIndex.
+						emptyCells.get(i).setTestMarker(true);
+						emptyCells.get(i).setTestIndex(index);
+						emptyCells.get(i).setCellValue(emptyCells.get(i).possibleValues.get(emptyCells.get(i).getTestIndex()));
+						narrowTheSearch (board, blocks);
+						//System.out.println("hit1");
+						//System.out.println("i is: " + i);
+						//System.out.println("emptyCells[i] possibleValue size is: " + emptyCells.get(i).possibleValues.size());
+						//System.out.println("index is: " + index);
+					//else if there are no possibleValues for that empty cell, we need to BACKTRACK.
+					} else if (emptyCells.get(i).possibleValues.isEmpty()) {
+						//Subtract two from i so that once the for loop iterates i will point
+						//to the previous empty cell.
+						i = i - 2;
+						//increment index to try the next possibleValue of that cell.
+						index++;
+						//System.out.println("hit2");
+						//System.out.println("i is: " + i);
+						//System.out.println("emptyCells[i] possibleValue size is: " + emptyCells.get(i).possibleValues.size());
+						//System.out.println("index is: " + index);
+					//else if all possible values have been tried for that emptyCell, we need to BACKTRACK
+					} else if (index >= emptyCells.get(i).possibleValues.size()) {
+						//Subtract two from i so that once the for loop iterates i will point to the previous
+						//empty cell.
+						i = i - 3;
+						//set the index equal to the previous emptyCells index + 1 to try that cells next
+						//possible value.
+						index = emptyCells.get(i - 1).getTestIndex() + 1;
+						//System.out.println("hit3");
+					}
+					System.out.println("ii is: " + i + "\n");
+					//System.out.println("emptyCells[i] possibleValue size is: " + emptyCells.get(i).possibleValues.size());
+					//System.out.println("cellValue for emptyCell[i] is: " + emptyCells.get(i).getCellValue());
+					//System.out.println("index is: " + index);
+					
+		}//end emptyCell for loop
+				
+		/*//Make sure that the values for x and y won't cause an out of bounds error.
 		if ((x < 9 && x >= 0) && (y < 9 && y >= 0)) {
 			
 			//If when backtracking the cell is a filled one that has not been tested, 
@@ -179,7 +234,7 @@ public class SudokuSolver {
 			else
 				solvePuzzleRec (board, blocks, x, y+1, index, false);
 			
-		}//end if within bounds of array	
+		}//end if within bounds of array	*/
 	
 	}//end solvePuzzleRec
 	
