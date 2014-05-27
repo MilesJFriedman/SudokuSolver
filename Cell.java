@@ -59,6 +59,10 @@ public class Cell {
 			
 	}
 
+	public void setCellValue (int value) {
+		this.cellValue = value;
+	}
+
 	//returns the integer value stored within the cell
 	public int getCellValue () {
 		return this.cellValue;
