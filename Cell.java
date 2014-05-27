@@ -14,6 +14,8 @@ public class Cell {
 	private int yCoordinate;
 	private int cellValue;
 	private int membOfBlock;
+	private int testIndex;
+	private boolean isTestValue;
 	ArrayList<Integer> possibleValues;
 	
 	public Cell (int x, int y, int value) {
@@ -21,6 +23,7 @@ public class Cell {
 		this.yCoordinate = y;
 		this.cellValue = value;
 		this.membOfBlock = setBlockNumber();
+		this.isTestValue = false;
 		this.possibleValues = new ArrayList<Integer>();
 	}//constructor
 	
@@ -63,6 +66,22 @@ public class Cell {
 		this.cellValue = value;
 	}
 
+	public void setTestMarker (boolean value) {
+		this.isTestValue = value;
+	}
+	
+	public void setTestIndex (int value) {
+		this.testIndex = value;
+	}
+	
+	public boolean getTestValue () {
+		return this.isTestValue;
+	}
+	
+	public int getTestIndex () {
+		return this.testIndex;
+	}
+	
 	//returns the integer value stored within the cell
 	public int getCellValue () {
 		return this.cellValue;

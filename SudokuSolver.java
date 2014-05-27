@@ -56,59 +56,194 @@ public class SudokuSolver {
 		bestRow = bR.intValue();
 		bestColumn = bC.intValue();
 		
-		
-		//System.out.println("bestCountR: " + bestCountR + " bestCountC: " + bestCountC);
+		int x = 0;
+		int y = 0;
+		int index = 0;
+		boolean toRetreat = false;
+		int emptyCellCount = -1;
+		/*boolean flag = false;
+		//System.out.println("bestCountR: " + bestCountR + " bestCountC: " + bestCountC);*/
 		
 		narrowTheSearch (board, blocks);
-		//solvePuzzleRec (board, blocks);
 		
-		System.out.println("board (3,6) has this many possible values: " + board[3][6].possibleValues.size());
-		System.out.println("board (3,6) element 0 of possibleValues is: " +board[3][6].possibleValues.get(0));
+		fillDefiniteValues (board, blocks);
+		
+		solvePuzzleRec (board, blocks, x, y, index, toRetreat);
+		
+		//System.out.println("board (6,3) has this many possible values: " + board[6][3].possibleValues.size());
+		//System.out.println("board (6,3) element 0 of possibleValues is: " + board[6][3].possibleValues.get(0));
+		
+		/*do {
+			emptyCellCount = -1;
+			//loop through each cell on the board checking if the cell is empty (has a cell value: 0)
+			for (x = 0; x < 9; x++) {
+				for (y = 0; y < 9; y++) {
+					//if the current cell is empty, increment emptyCellCount
+					if (board[x][y].getCellValue() == 0)
+						emptyCellCount++;
+				}
+			}
+		
+			
+			//if there remains at least one empty cell
+			if (emptyCellCount+1 > 0) {
+				//fill in the empty blocks who have only one possibleValue that makes a
+				//correct cellValue.
+				flag = fillEmptyCell (board);
+				//run narrowTheSearch to update all cell's possibleValues arrayLists.
+				narrowTheSearch (board, blocks);
+				//recursively run solvePuzzle until the puzzle is solved.
+				//solvePuzzleRec (board, blocks, x, y, emptyCellCount);
+			}
+			
+			//if there are no empty cells left on the board then the board must be solved, therefore
+			//the correct puzzle should be printed.
+			if (emptyCellCount+1 == 0)
+				displayBoard (board);
+			
+			//System.out.println("board (2,3) has this many possible values: " + board[2][3].possibleValues.size());
+			//System.out.println("board (2,3) element 0 of possibleValues is: " + board[2][3].possibleValues.get(0));
+			//System.out.println("emptyCellCount is: " + emptyCellCount);
+			//flag = solvePuzzle (board, blocks, x, y, emptyCellCount);
+			//System.out.println(flag);
+		
+		} while (emptyCellCount+1 != 0 && flag == true);*/
 
+		
 				
 		//displayBlocks(blocks);
-		//displayBoard(board);
+		displayBoard(board);
 		
 	}//end main
 	
 	
 	
-	static void solvePuzzleRec (Cell[][] board, Cell[][] blocks) {
-		int emptyCellCount = -1;
-		//loop through each cell on the board checking if the cell is empty (has a cell value: 0)
-		for (int x = 0; x < 9; x++) {
-			for (int y = 0; y < 9; y++) {
-				//if the current cell is empty, increment emptyCellCount
-				if (board[x][y].getCellValue() == 0)
-					emptyCellCount++;
+	static void solvePuzzleRec (Cell[][] board, Cell[][] blocks, int x, int y, int index, boolean toRetreat) {
+	
+		//Make sure that the values for x and y won't cause an out of bounds error.
+		if ((x < 9 && x >= 0) && (y < 9 && y >= 0)) {
+			
+			//If when backtracking the cell is a filled one that has not been tested, 
+			//keep retreating until the previous tested cell is found.
+			if ((toRetreat == true && board[x][y].getCellValue() != 0 && board[x][y].getTestValue() == true)) {
+				//if y = 0 then backtrack to the last space of the previous row.
+				if (y == 0)
+					solvePuzzleRec (board, blocks, x-1 , y+8 , index, true);
+				//otherwise move back one column while keeping the row number fixed.
+				else 
+					solvePuzzleRec (board, blocks, x, y-1, index, true);
 			}
-		}
 		
-		//if there remains at least one empty cell
-		if (emptyCellCount+1 > 0) {
-			//fill in the empty blocks who have only one possibleValue that makes a
-			//correct cellValue.
-			fillEmptyCell (board);
-			//run narrowTheSearch to update all cell's possibleValues arrayLists.
-			narrowTheSearch (board, blocks);
-			//recursively run solvePuzzle until the puzzle is solved.
-			solvePuzzleRec (board, blocks);
-		}
-		
-		//if there are no empty cells left on the board then the board must be solved, therefore
-		//the correct puzzle should be printed.
-		if (emptyCellCount+1 == 0)
-			displayBoard (board);
-		
+			//if the current cell is an emptyCell
+			if (board[x][y].getCellValue() == 0) {
+				
+				//if a dead end has been reached there will be no possibleValues to place so backtrack.
+				if (board[x][y].possibleValues.isEmpty()) {
+					//if y = 0 then backtrack to the last space of the previous row.
+					if (y == 0)
+						solvePuzzleRec (board, blocks, x-1 , y+8 , index+1, true);
+					//otherwise move back one column while keeping the row number fixed.
+					else {
+						solvePuzzleRec (board, blocks, x, y-1, index+1, true);
+					}
+				} 
+					
+				//if all possibleValues have been tried for the current empty cell, backtrack to the
+				//last empty cell and try the next possibleValue at that empty cell. Additionally,
+				//if backtracking and a test cell is found, try the next possibleValue.
+				if (index >= board[x][y].possibleValues.size() || (board[x][y].getTestValue() == true && toRetreat == true)) {
+					//if y = 0 then backtrack to the last space of the previous row.
+					if (y == 0)
+						solvePuzzleRec (board, blocks, x-1 , y+8 , board[x][y].getTestIndex()+1 , true);
+					//otherwise move back one column while keeping the row number fixed.
+					else
+						solvePuzzleRec (board, blocks, x, y-1, board[x][y].getTestIndex()+1 , true);
+				}
+					
+				//if testing, set the cellValue of the current emptyCell equal to the possibleValue at
+				//index.
+				board[x][y].setCellValue(board[x][y].possibleValues.get(index));
+				board[x][y].setTestMarker(true);
+				board[x][y].setTestIndex(index);
+				narrowTheSearch (board, blocks);
+				if (y == 8)
+					solvePuzzleRec (board, blocks, x+1, y-8, index, false);
+				else
+					solvePuzzleRec (board, blocks, x, y+1, index, false);
+				
+			}//end if empty cell
+			
+			//If not an empty cell, call solvePuzzleRec on the next cell!
+			if (y == 8)
+				solvePuzzleRec (board, blocks, x+1, y-8, index, false);
+			else
+				solvePuzzleRec (board, blocks, x, y+1, index, false);
+			
+		}//end if within bounds of array	
+	
 	}//end solvePuzzleRec
 	
-	static void fillEmptyCell (Cell[][] board) {
+	//looks at each empty cell and if that empty cell has only one value in its possibleValues
+	//list, it places that value and updates each remaining empty cells possibleValues list.
+	static void fillDefiniteValues (Cell[][] board, Cell[][] blocks) {
+		int x = 0;
+		int y = 0;
+		int emptyCellCount = -1;
+		boolean flag = false;
+		
+		
+		do {
+			emptyCellCount = -1;
+			//loop through each cell on the board checking if the cell is empty (has a cell value: 0)
+			for (x = 0; x < 9; x++) {
+				for (y = 0; y < 9; y++) {
+					//if the current cell is empty, increment emptyCellCount
+					if (board[x][y].getCellValue() == 0)
+						emptyCellCount++;
+				}
+			}
+		
+			
+			//if there remains at least one empty cell
+			if (emptyCellCount+1 > 0) {
+				//fill in the empty blocks who have only one possibleValue that makes a
+				//correct cellValue.
+				flag = fillEmptyCell (board);
+				//run narrowTheSearch to update all cell's possibleValues arrayLists.
+				narrowTheSearch (board, blocks);
+				//recursively run solvePuzzle until the puzzle is solved.
+				//solvePuzzleRec (board, blocks, x, y, emptyCellCount);
+			}
+			
+			//if there are no empty cells left on the board then the board must be solved, therefore
+			//the correct puzzle should be printed.
+			if (emptyCellCount+1 == 0)
+				displayBoard (board);
+			
+			//System.out.println("board (2,3) has this many possible values: " + board[2][3].possibleValues.size());
+			//System.out.println("board (2,3) element 0 of possibleValues is: " + board[2][3].possibleValues.get(0));
+			//System.out.println("emptyCellCount is: " + emptyCellCount);
+			//flag = solvePuzzle (board, blocks, x, y, emptyCellCount);
+			//System.out.println(flag);
+		
+		} while (emptyCellCount+1 != 0 && flag == true);
+	}
+	
+	//Sets an emptyCell's cellValue equal to the starting index of it's possibleValues list if
+	//its possibleValues list has only one element. (Extension of the fillDefiniteValues method)
+	static boolean fillEmptyCell (Cell[][] board) {
+		boolean flag = false;
 		for (int x = 0; x < 9; x++) {
-			for (int y = 0; x < 9; x++) {
-				if (board[x][y].getCellValue() == 0 && board[x][y].possibleValues.size() == 1)
+			for (int y = 0; y < 9; y++) {
+				//System.out.println(board[x][y].getCellValue());
+				if (board[x][y].getCellValue() == 0 && board[x][y].possibleValues.size() == 1) {
 					board[x][y].setCellValue(board[x][y].possibleValues.get(0));
+					//System.out.println(board[x][y].getCellValue());
+					flag = true;
+				}
 			}
 		}
+		return flag;
 	}
 
 	//Loops through each cell of the bestRow/Column and fills the possibleValues arrayList for
@@ -125,6 +260,15 @@ public class SudokuSolver {
 		NumberTracker has8 = new NumberTracker(false);
 		NumberTracker has9 = new NumberTracker(false);
 		int i,j, c;
+		
+		//make sure all possibleValue lists for every empty cell is clear so that this method
+		//may be reused to update the possibleValue lists for each cell.
+		for (i = 0; i < 9; i++) {
+			for (j = 0; j < 9; j++) {
+				if (board[i][j].getCellValue() == 0)
+					board[i][j].possibleValues.clear();
+			}
+		}
 		
 		//Determine if whether to start at the best row, or the best column
 		//If the best column is the best starting point, check to see what values the empty
@@ -345,6 +489,7 @@ public class SudokuSolver {
 		//System.out.println("Best Column: " + bestColumn + ", Best Count Column: " + bestCountC);
 	}
 	
+	//initially fills the board and blocks arrays based on input from the user.
 	static void fillArrays (Scanner input, Cell[][] board, Cell[][] blocks) {
 		int x, y;
 		for (x = 0; x < 9; x++) {
@@ -364,6 +509,7 @@ public class SudokuSolver {
 		}//end column loop
 	}
 	
+	//fills the blocks array. This is called inside of the fillArrays method.
 	static void fillBlocks (int x, int y, Cell[][] board, Cell[][] blocks) {
 		//Check the current cell's block number
 		int blockNum = board[x][y].getBlockNumber();
