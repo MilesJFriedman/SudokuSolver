@@ -41,23 +41,6 @@ public class SudokuSolver {
 			
 			fillArrays (input, board, blocks);
 			
-			
-			AtomicInteger ecR = new AtomicInteger(emptyCellsR);
-			AtomicInteger ecC = new AtomicInteger(emptyCellsC);
-			AtomicInteger bcR = new AtomicInteger(bestCountR);
-			AtomicInteger bcC = new AtomicInteger(bestCountC);
-			AtomicInteger bR = new AtomicInteger(bestRow);
-			AtomicInteger bC = new AtomicInteger(bestColumn);
-			
-			findBestStartingLine (board, ecR, ecC, bcR, bcC, bR, bC);
-			
-			emptyCellsR = ecR.intValue();
-			emptyCellsC = ecC.intValue();
-			bestCountR = bcR.intValue();
-			bestCountC = bcC.intValue();
-			bestRow = bR.intValue();
-			bestColumn = bC.intValue();
-			
 			int x = 0;
 			int y = 0;
 			int index = 0;
@@ -69,23 +52,22 @@ public class SudokuSolver {
 			
 			narrowTheSearch (board, blocks);
 			
-			fillDefiniteValues (board, blocks);
+			fillDefiniteValues (board, blocks, p);
 			
 			//This function doesn't work properly :(
-			isSolved = solvePuzzle (board, blocks, x, y, index, toRetreat);
+			isSolved = solvePuzzle (board, blocks, x, y, index);
 					
 			if (isSolved == true)
 				//displayBlocks(blocks);
-				displayBoard(board);
+				displayBoard(board, p);
 			else
-				System.out.println("No solution possible");
+				System.out.printf("Test Case %d: \n\nNo solution possible\n", p+1);
 		}
 		
 	}//end main
 	
 	
-	
-	static boolean solvePuzzle (Cell[][] board, Cell[][] blocks, int x, int y, int index, boolean toRetreat) {
+	static boolean solvePuzzle (Cell[][] board, Cell[][] blocks, int x, int y, int index) {
 		//create an array list to hold empty cells.
 		ArrayList<Cell> emptyCells = new ArrayList<Cell>();
 		
@@ -97,8 +79,6 @@ public class SudokuSolver {
 				}
 			}
 		}
-		
-		//System.out.println("There are this many empty cells: " + emptyCells.size());
 		
 		//Iterates through the emptyCell array list that was populated above.
 		for (int i = 0; i < emptyCells.size(); i++) {
@@ -116,10 +96,6 @@ public class SudokuSolver {
 					//to the previous empty cell.
 					i = i - 2;
 					narrowTheSearch (board, blocks);
-					//System.out.println("hit2");
-					//System.out.println("i is: " + i);
-					//System.out.println("emptyCells[i] possibleValue size is: " + emptyCells.get(i).possibleValues.size());
-					//System.out.println("index is: " + index);
 				//else if all possible values have been tried for that emptyCell, we need to BACKTRACK
 				} else if (index >= emptyCells.get(i).possibleValues.size()) {
 					if (i != 0) {
@@ -149,16 +125,7 @@ public class SudokuSolver {
 					narrowTheSearch (board, blocks);
 					//reset the index for the next emptyCell
 					index = 0;
-					//System.out.println("hit1");
-					//System.out.println("i is: " + i);
-					//System.out.println("emptyCells[i] possibleValue size is: " + emptyCells.get(i).possibleValues.size());
-					//System.out.println("index is: " + index);
 				}
-				//System.out.println("i is: " + i + "\n");
-				//System.out.println("emptyCells[i] possibleValue size is: " + emptyCells.get(i).possibleValues.size());
-				//System.out.println("cellValue for emptyCell[i] is: " + emptyCells.get(i).getCellValue());
-				//System.out.println("index is: " + index);	
-			
 				
 		}//end emptyCell for loop
 				
@@ -167,12 +134,11 @@ public class SudokuSolver {
 	
 	//looks at each empty cell and if that empty cell has only one value in its possibleValues
 	//list, it places that value and updates each remaining empty cells possibleValues list.
-	static void fillDefiniteValues (Cell[][] board, Cell[][] blocks) {
+	static void fillDefiniteValues (Cell[][] board, Cell[][] blocks, int p) {
 		int x = 0;
 		int y = 0;
 		int emptyCellCount = -1;
 		boolean flag = false;
-		
 		
 		do {
 			emptyCellCount = -1;
@@ -200,13 +166,7 @@ public class SudokuSolver {
 			//if there are no empty cells left on the board then the board must be solved, therefore
 			//the correct puzzle should be printed.
 			if (emptyCellCount+1 == 0)
-				displayBoard (board);
-			
-			//System.out.println("board (2,3) has this many possible values: " + board[2][3].possibleValues.size());
-			//System.out.println("board (2,3) element 0 of possibleValues is: " + board[2][3].possibleValues.get(0));
-			//System.out.println("emptyCellCount is: " + emptyCellCount);
-			//flag = solvePuzzle (board, blocks, x, y, emptyCellCount);
-			//System.out.println(flag);
+				displayBoard (board, p);
 		
 		} while (emptyCellCount+1 != 0 && flag == true);
 	}
@@ -217,10 +177,8 @@ public class SudokuSolver {
 		boolean flag = false;
 		for (int x = 0; x < 9; x++) {
 			for (int y = 0; y < 9; y++) {
-				//System.out.println(board[x][y].getCellValue());
 				if (board[x][y].getCellValue() == 0 && board[x][y].possibleValues.size() == 1) {
 					board[x][y].setCellValue(board[x][y].possibleValues.get(0));
-					//System.out.println(board[x][y].getCellValue());
 					flag = true;
 				}
 			}
@@ -252,11 +210,6 @@ public class SudokuSolver {
 			}
 		}
 		
-		//Determine if whether to start at the best row, or the best column
-		//If the best column is the best starting point, check to see what values the empty
-		//spaces of each column can contain by checking the block/row for the empty cell.
-		//if (bestCountC <= bestCountR) {
-		
 		//keeps track of what column the program is currently looking at
 		for (c = 0; c < 9; c++) {
 			for (i = 0; i < 9; i++) {
@@ -282,8 +235,6 @@ public class SudokuSolver {
 							break;
 				}//end original switch
 			}//end i for loop
-			
-			//System.out.println("has1: " + has1.isContained() + " has2: " + has2.isContained() + " has3: " + has3.isContained() + " has4: " + has4.isContained() + " has5: " + has5.isContained() + " has6: " + has6.isContained() + " has7: " + has7.isContained() + " has8: " + has8.isContained() + " has9: " + has9.isContained());
 			
 			//fill each empty cells possible values array with the newly gained boolean values.
 			for (i = 0; i < 9; i++) {
@@ -393,11 +344,6 @@ public class SudokuSolver {
 					
 				}//end if empty cell is found
 				
-				/*System.out.printf("Cell (%d,%d)'s possible cell values are: ", i, c);
-				for (Integer value: board[i][c].possibleValues)
-					System.out.print(value + ", ");
-				System.out.println();*/
-				
 			}//end for i loop
 			
 			//After each column is iterated through, reset all boolean NumberTracker "contains"
@@ -421,64 +367,17 @@ public class SudokuSolver {
 			has9.setContains(false);
 			has9.resetChanged();
 			
-			System.out.println("\n");
+			//System.out.println("\n");
 			
 		}//end c for loop
 	
 	}//end narrowTheSearch
 	
-	//Finds the which column or row has the least amount of empty cells to fill and should be
-	//the first row or column started at.
-	static void findBestStartingLine (Cell[][] board, AtomicInteger ecR, AtomicInteger ecC, AtomicInteger bcR, AtomicInteger bcC, AtomicInteger bR, AtomicInteger bC) {
-		int x, y;
-		for (x = 0; x < 9; x++) {
-			for (y = 0; y < 9; y++) {
-				
-				
-				//(Invert the x and y variables to loop through each cell in the column/row) 
-				//Increment the emptyCell variable for the column or row as empty cells are found.
-				if (board[x][y].getCellValue() == 0)
-					ecR.getAndIncrement();
-						
-				//System.out.println("\n" + board[x][y].getCellValue());
-				if (board[y][x].getCellValue() == 0)
-					ecC.getAndIncrement();
-				
-				
-			}
-			
-			//If checking the first row OR if the amount of empty cells in the current row is less 
-			//than the amount of empty cells in the current best row, set a new bestCount and 
-			//update the bestRow.
-			if (bcR.intValue() == -1 || (ecR.intValue() != -1 && ecR.intValue() < bcR.intValue())) {
-				bcR.set(ecR.get());
-				bR.set(x);
-			}
-			
-			//reset the emptyCells counter for the next row.
-			ecR.set(-1);
-			
-			//Similar condition as above only x and y are inverted (x now refers to column #)
-			if (bcC.intValue() == -1 || (ecC.intValue() != -1 && ecC.intValue() < bcC.intValue())) {
-				bcC.set(ecC.get());
-				bC.set(x);
-			}
-			
-			//reset the emptyColumns counter for the next column.
-			ecC.set(-1);
-			
-		}
-		
-		//System.out.println("bestCountR: " + bestCountR + " bestCountC: " + bestCountC);
-		//System.out.println("Best Column: " + bestColumn + ", Best Count Column: " + bestCountC);
-	}
-	
 	//initially fills the board and blocks arrays based on input from the user.
 	static void fillArrays (Scanner input, Cell[][] board, Cell[][] blocks) {
 		int x, y;
 		for (x = 0; x < 9; x++) {
-			for (y = 0; y < 9; y++) {
-				
+			for (y = 0; y < 9; y++) {		
 				//if (input.nextLine() != "\n" && input.next() != " ") {
 				int test = input.nextInt();
 				//if (test > -1 && test < 10){	
@@ -487,9 +386,7 @@ public class SudokuSolver {
 				//Fills the blocks array based on info gathered from each cell
 				fillBlocks (x, y, board, blocks);
 				//}//end check for empty line
-				
 			}//end row loop
-			
 		}//end column loop
 	}
 	
@@ -497,20 +394,16 @@ public class SudokuSolver {
 	static void fillBlocks (int x, int y, Cell[][] board, Cell[][] blocks) {
 		//Check the current cell's block number
 		int blockNum = board[x][y].getBlockNumber();
-		//System.out.print(board[x][y].getCellValue() + " ");
-		//System.out.print(blockNum + " ");
-
+		
 		//Use the block number of the current cell to determine the row index for the block
 		//array, then loop through each index of the
 		for (int i = 0; i < 9; i++) {
-			
 			//If there is no cell already stored in the i'th index of a certain cell block group,
 			//store the current cell in that cell block, then break out (no need to find
 			//the next open block to store in, as it has already been found).
 			if (blocks[blockNum - 1][i] == null) {
 				blocks[blockNum - 1][i] = board[x][y];
 				break;
-				//System.out.print(blocks[x][y].getCellValue() + " ");
 			}	
 		}
 		
@@ -522,9 +415,7 @@ public class SudokuSolver {
 		
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-					
 					System.out.print(blocks[i][j].getCellValue() + " ");
-				
 			}//end row loop
 			
 			System.out.println();
@@ -532,15 +423,12 @@ public class SudokuSolver {
 		}//end column loop
 	}
 	
-	static void displayBoard (Cell[][] board) {
-		System.out.println("This is the board: \n");
+	static void displayBoard (Cell[][] board, int p) {
+		System.out.printf("\nTest Case %d Solution: \n\n", p+1);
 				
 			for (int i = 0; i < 9; i++) {
 				for (int j = 0; j < 9; j++) {
-						
 						System.out.print(board[i][j].getCellValue() + " ");
-						//System.out.print(board[i][j].getBlockNumber() + " ");
-						
 				}//end row loop
 				
 				System.out.print("\n");
@@ -590,30 +478,3 @@ public class SudokuSolver {
 
 }
 
-
-
-
-/*//Scan in the first line of the input file
-String firstLine = input.readLine();
-//Create the variable to store the number of puzzles to be solved
-int numberOfPuzzles = Integer.parseInt(firstLine);
-
-//System.out.println(numberOfPuzzles + "\n\n");
-
-//Create looping variables
-int i = 0;
-int j = 0;
-
-//For each puzzle,
-//for (i = 1; i <= numberOfPuzzles; i++) {
-	
-	//iterate through the next ten lines of the file which is the empty line, followed by the i'th puzzle.
-	//for (j = 0; j < 10; j++) {
-	
-	//fillBoardFromFile (input, board);
-	
-	
-			
-	//}//end single puzzle loop
-	
-//}//end number of puzzles loop*/
